@@ -30,12 +30,14 @@ const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: 
 //
 //     // client.close();
 // });
+
 async function run() {
     try {
         await client.connect();
         const database = client.db("food");
         const usersCollection = database.collection("users");
         const jobsCollection = database.collection("jobs");
+        const usersInfoCollection = database.collection("usersInfo");
         // create a document to insert
         // const doc = {
         //     name: "Maria",
@@ -114,6 +116,25 @@ async function run() {
         //     }
         //
         // })
+
+
+        // saving user information API PUT
+        app.put('/usersInfo', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await usersInfoCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+        // GET api
+        app.get('/usersInfo', async (req, res) => {
+            const data = usersInfoCollection.find({})
+            const dataArr = await data.toArray()
+            res.send(dataArr)
+        })
+
+
     } finally {
         // await client.close();
     }
