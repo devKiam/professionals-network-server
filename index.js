@@ -88,7 +88,7 @@ async function run() {
             res.send(JSON.stringify(result))
         })
 
-        // GET api
+        // GET api for jobs
         app.get('/jobs', async (req, res) => {
             const search = req.query.search
             const data = jobsCollection.find({})
@@ -132,6 +132,16 @@ async function run() {
             const data = usersInfoCollection.find({})
             const dataArr = await data.toArray()
             res.send(dataArr)
+        })
+
+
+        app.get('/usersInfo/:id',async(req,res)=>{
+            const id= req.params.id;
+            const query ={_id:ObjectId(id)};
+            const newQuery={$set:{status:'Connect'}}
+            const result = await usersInfoCollection.updateOne(query, newQuery);
+            console.log('load user id :',id);
+            res.json(result)
         })
 
 
